@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class TranslationKey extends Model
 {
     //
+    protected $fillable = [
+        'key',
+    ];
     public function translations()
     {
         return $this->hasMany(Translation::class);
@@ -14,7 +17,7 @@ class TranslationKey extends Model
 
     public function tags()
     {
-        return $this->belongsToMany(Tag::class, 'translation_key_tag');
+        return $this->belongsToMany(Tag::class, 'translation_key_tag')->withTimestamps();
     }
 
 }
