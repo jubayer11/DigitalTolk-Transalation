@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('translation_key_tag', function (Blueprint $table) {
-            $table->id();
             $table->foreignId('translation_key_id')
                 ->constrained('translation_keys')
                 ->cascadeOnUpdate()
@@ -22,10 +21,9 @@ return new class extends Migration
                 ->constrained('tags')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
-
             $table->primary(['translation_key_id', 'tag_id']);
             $table->index(['tag_id', 'translation_key_id']);
-            $table->timestamps();
+
         });
     }
 
