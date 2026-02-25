@@ -1,0 +1,255 @@
+{
+    "info": {
+        "name": "DigitalTolk Translation API",
+        "_postman_id": "f6b6b1d7-2d6f-4c89-9e51-3b6ff58d2a11",
+        "description": "Postman collection for testing JWT auth and translation endpoints.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        { "key": "baseUrl", "value": "http://127.0.0.1:8000" },
+        { "key": "accessToken", "value": "" },
+        { "key": "translationKey", "value": "homepage.hero.title" }
+    ],
+    "item": [
+        {
+            "name": "Health",
+            "item": [
+                {
+                    "name": "GET /api/health",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/health",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "health"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Auth",
+            "item": [
+                {
+                    "name": "POST /api/auth/login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status is 200', function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "let jsonData = {};",
+                                    "try { jsonData = pm.response.json(); } catch (e) {}",
+                                    "",
+                                    "if (jsonData.accessToken) {",
+                                    "    pm.collectionVariables.set('accessToken', jsonData.accessToken);",
+                                    "}",
+                                    "",
+                                    "pm.test('accessToken exists', function () {",
+                                    "    pm.expect(jsonData.accessToken).to.be.a('string');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/login",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "auth", "login"]
+                        }
+                    }
+                },
+                {
+                    "name": "GET /api/auth/me",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/me",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "auth", "me"]
+                        }
+                    }
+                },
+                {
+                    "name": "POST /api/auth/refresh",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "let jsonData = {};",
+                                    "try { jsonData = pm.response.json(); } catch (e) {}",
+                                    "if (jsonData.accessToken) {",
+                                    "    pm.collectionVariables.set('accessToken', jsonData.accessToken);",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/refresh",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "auth", "refresh"]
+                        }
+                    }
+                },
+                {
+                    "name": "POST /api/auth/logout",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/logout",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "auth", "logout"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Translations",
+            "item": [
+                {
+                    "name": "POST /api/translations (Create)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"key\": \"{{translationKey}}\",\n  \"translations\": {\n    \"en\": \"Welcome to My App\",\n    \"fr\": \"Bienvenue dans mon application\",\n    \"es\": \"Bienvenido a mi aplicación\"\n  },\n  \"tags\": [\"web\", \"landing\", \"homepage\"]\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/translations",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "translations"]
+                        }
+                    }
+                },
+                {
+                    "name": "GET /api/translations (Search/List)",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/translations?search=welcome&locale=en&tag=web&perPage=10",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "translations"],
+                            "query": [
+                                { "key": "search", "value": "welcome" },
+                                { "key": "locale", "value": "en" },
+                                { "key": "tag", "value": "web" },
+                                { "key": "perPage", "value": "10" }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "GET /api/translations/{key} (Show)",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/translations/{{translationKey}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "translations", "{{translationKey}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "PUT /api/translations/{key} (Update)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"translations\": {\n    \"en\": \"Welcome to Our Platform\"\n  },\n  \"tags\": [\"web\", \"homepage\", \"marketing\"]\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/translations/{{translationKey}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "translations", "{{translationKey}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "GET /api/translations/export (locale only)",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/translations/export?locale=en",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "translations", "export"],
+                            "query": [
+                                { "key": "locale", "value": "en" }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "GET /api/translations/export (locale + tags[])",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/translations/export?locale=en&tags[]=web&tags[]=homepage",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "translations", "export"],
+                            "query": [
+                                { "key": "locale", "value": "en" },
+                                { "key": "tags[]", "value": "web" },
+                                { "key": "tags[]", "value": "homepage" }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "DELETE /api/translations/{key} (Delete)",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/translations/{{translationKey}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "translations", "{{translationKey}}"]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
