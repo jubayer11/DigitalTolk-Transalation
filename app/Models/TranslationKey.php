@@ -17,7 +17,7 @@ class TranslationKey extends Model
 
     public function tags()
     {
-        return $this->belongsToMany(Tag::class, 'translation_key_tag')->withTimestamps();
+        return $this->belongsToMany(Tag::class, 'translation_key_tag');
     }
 
 }
