@@ -4,6 +4,7 @@ namespace Tests\Feature\Performance;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Group;
 use Illuminate\Support\Facades\DB;
 use Tests\Support\CreatesJwtAuth;
 use Tests\TestCase;
@@ -16,6 +17,7 @@ class ExportPerformanceTest extends TestCase
     /**
      * @group performance
      */
+    #[Group('performance')]
     public function test_export_endpoint_is_reasonably_fast_on_large_dataset(): void
     {
         config(['cache.default' => 'array']);
