@@ -25,7 +25,19 @@ class ExportTranslationRequest extends BaseApiRequest
      */
     protected function prepareForValidation(): void
     {
+        // ✅ Read query/body input, not the Request's internal locale property
+        $locale = $this->input('locale');
+
+        $this->merge([
+            'locale' => is_string($locale) ? trim(strtolower($locale)) : $locale,
+        ]);
+
         $tags = $this->input('tags');
+
+        // Optional: support "tags=web,homepage" too
+        if (is_string($tags)) {
+            $tags = array_map('trim', explode(',', $tags));
+        }
 
         if (is_array($tags)) {
             $normalizedTags = array_values(array_filter(array_map(function ($tag) {
@@ -36,10 +48,6 @@ class ExportTranslationRequest extends BaseApiRequest
                 'tags' => $normalizedTags,
             ]);
         }
-
-        $this->merge([
-            'locale' => is_string($this->locale) ? trim(strtolower($this->locale)) : $this->locale,
-        ]);
     }
 
     /**
