@@ -28,7 +28,9 @@ class TranslationController extends Controller
 
     public function show(string $key): JsonResponse
     {
+
         $translationKey = $this->translationService->show($key);
+
 
         return response()->json([
             'message' => 'Translation retrieved successfully.',

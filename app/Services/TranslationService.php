@@ -74,6 +74,7 @@ class TranslationService implements TranslationServiceInterface
     {
         $translationKey = $this->translationRepository->findByKeyWithRelations($key);
 
+
         if (! $translationKey) {
             throw new NotFoundHttpException('Translation key not found.');
         }

@@ -24,7 +24,10 @@ class TranslationExportService implements TranslationExportServiceInterface
             ->values()
             ->all();
 
+
+
         $cacheKey = $this->cachePrefix.$locale.':'.md5(json_encode($normalizedTags));
+
 
         return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($locale, $normalizedTags) {
             return $this->translationRepository

@@ -17,7 +17,9 @@ class TranslationExportController extends Controller
     {
         $validated = $request->validated();
 
+
         $locale = $validated['locale'];
+
         $tags = $validated['tags'] ?? [];
 
         $export = $this->translationExportService->export($locale, $tags);
